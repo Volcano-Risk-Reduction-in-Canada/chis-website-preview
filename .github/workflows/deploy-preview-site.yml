@@ -39,8 +39,8 @@ jobs:
         with:
           ssh-key: ${{ secrets.CHIS_WEBSITE_SSH_DEPLOY_KEY }}
           submodules: recursive
-      - name: Run "docker compose up" to start NGINX and PHP
-        run: docker compose up
+      - name: Run "docker compose up -d" to start NGINX and PHP (detached mode)
+        run: docker compose up -d
       - name: Mirror website to get static pages
         run: wget -m -nH -P public http://localhost:8080/{,index-{en,fr}.php}
       - name: Setup Pages
