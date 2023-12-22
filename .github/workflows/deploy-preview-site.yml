@@ -39,17 +39,31 @@ jobs:
         with:
           ssh-key: ${{ secrets.CHIS_WEBSITE_SSH_DEPLOY_KEY }}
           submodules: recursive
+
       - name: Run "docker compose up -d" to start NGINX and PHP (detached mode)
         run: docker compose up -d
+
+      - name: Install HTTrack
+        run: |
+          sudo eatmydata apt-get update
+          sudo eatmydata apt-get -y install httrack
+
       - name: Mirror website to get static pages
-        run: wget -m -nH -P public http://localhost:8080/{,index-{en,fr}.php}
+        run: httrack http://localhost:8080/index{,-en,-fr}.php -%k -%v2 -%F "" -A0 -I0 -s0
+
+      - name: Fix up absolute PHP links
+        run: |
+          sed -i 's#"/\([^"]\+\)\.php#"\1.html#g' *.html
+          sed -i 's#"/\([^"]\+\)\.php#"../\1.html#g' */*.html
+
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v3
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v2
         with:
-          path: ./public
+          path: ./localhost_8080
 
   # Deployment job
   deploy:
