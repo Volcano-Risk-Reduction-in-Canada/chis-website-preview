@@ -37,6 +37,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
+          ssh-key: ${{ secrets.CHIS_WEBSITE_SSH_DEPLOY_KEY }}
           submodules: recursive
       - name: Run "docker compose up" to start NGINX and PHP
         run: docker compose up
