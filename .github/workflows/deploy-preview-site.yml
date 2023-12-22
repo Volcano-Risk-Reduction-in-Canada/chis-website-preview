@@ -51,8 +51,10 @@ jobs:
       - name: Mirror website to get static pages
         run: httrack http://localhost:8080/index{,-en,-fr}.php -%k -%v2 -%F "" -A0 -I0 -s0
 
-      - name: Fix up absolute PHP links
+      - name: Copy static site and fix absolute links to *.php
         run: |
+          cp -a localhost_8080 public
+          cd public
           sed -i 's#"/\([^"]\+\)\.php#"\1.html#g' *.html
           sed -i 's#"/\([^"]\+\)\.php#"../\1.html#g' */*.html
 
@@ -63,7 +65,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v2
         with:
-          path: ./localhost_8080
+          path: ./public
 
   # Deployment job
   deploy:
