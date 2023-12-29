@@ -48,8 +48,11 @@ jobs:
           sudo eatmydata apt-get update
           sudo eatmydata apt-get -y install httrack
 
+      - name: Generate phpinfo for the static site
+        run: echo '<?php phpinfo() ?>' > data/phpinfo.php
+
       - name: Mirror website to get static pages
-        run: httrack http://localhost:8080/index{,-en,-fr}.php -%k -%v2 -%F "" -A0 -I0 -s0
+        run: httrack http://localhost:8080/{index{,-en,-fr},phpinfo}.php -%k -%v2 -%F "" -A0 -I0 -s0
 
       - name: Copy static site and fix absolute links to *.php
         run: |
