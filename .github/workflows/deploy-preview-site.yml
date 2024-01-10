@@ -61,6 +61,24 @@ jobs:
           sed -i 's#"/\([^"]\+\)\.php#"\1.html#g' *.html
           sed -i 's#"/\([^"]\+\)\.php#"../\1.html#g' */*.html
 
+      - name: Set up redirects for QRA-EQR to DFID-BDICD
+        run: |
+          mkdir -p public/QRA-EQR
+          for lang in en eng fr; do cat <<EOF > public/QRA-EQR/index-${lang}.html
+          <!DOCTYPE html>
+          <html>
+            <head>
+              <title>Redirecting...</title>
+              <meta charset="utf-8" />
+              <meta http-equiv="refresh" content="1; url=../DFID-BDICD/index-${lang:0:2}.html" />
+            </head>
+            <body>
+              <p>Redirecting...</p>
+            </body>
+          </html>
+          EOF
+          done
+
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v3
